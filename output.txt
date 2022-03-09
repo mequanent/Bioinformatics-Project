@@ -1,5 +1,6 @@
 
 Checking input mut size:  (20, 20)
+
 Printed values include: PAM1, PAMx(round to nearest int) and Log-odds of PAMx as nearest int
 
 *******************************************************

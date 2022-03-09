@@ -31,8 +31,6 @@ x = args.pam
 # ***************** End of parsing *************************************************************
 # **********************************************************************************************
 
-sys.stdout=open(output_path,"w") # Open an output file to write all printed statements and values  
-
 # **********************************************************************************************
 # ************ Preprocess the input data, mut.txt, to get the PAM1 matrix ***********************
 input_file = open(input_path, "r")
@@ -45,23 +43,17 @@ for line in lines:
   mut.append(line)
 
 mut = np.array(mut).astype(int) # convert the string array into numpy array of integers
-print('\nChecking input mut size: ', mut.shape) # confirm if we get the right matrix size from the text
+# A statement printing to confirm if we get the right matrix size from the text included in the
+# post- process section below
 PAM1 = np.true_divide(mut, 10000) # Change the four digit values into values between 0 & 1
 # Normalized frequencies of acids keeping the order in the given matrix
 fi = [0.087, 0.041, 0.040, 0.047, 0.033, 0.038, 0.050, 0.089, 0.034, 0.037, 0.085, 0.081,
       0.015, 0.040, 0.051, 0.070, 0.058, 0.010, 0.030, 0.065]
 
-print("\nPrinted values include: PAM1, PAMx(round to nearest int) and Log-odds of PAMx as nearest int")
-
-print("\n*******************************************************")
-print("****************** PAM1 *******************************")
-print("*******************************************************")
-print(PAM1)
 # ************** End of pre-processing the required inputs  *******************************
 # *****************************************************************************************
 
 # ******************  The PAMx Function  **************************************************
-
 def pam(x):
   PAM_str = "PAM" + str(x) # To make x in the PAMx flexible when displaying
   if x < 1:     # Check if the value of x is valid
@@ -78,14 +70,7 @@ def pam(x):
 # ************** End of the PAMx Function ******************************************************
 # **********************************************************************************************
 
-PAMx, PAM_str = pam(x) # get the PAMx value and 'PAMx' for displaying purpose
-
-
-print("\n*******************************************************")
-print("****************** {} *****************************".format(PAM_str))
-print("*******************************************************\n")
-print(np.rint(PAMx * 100).astype(int)) # Part of post-processing to display PAMx values as nearest -
-                              # integers resolving formats like 1.0, 0.0 changed to 1, 0 respctively
+PAMx, PAM_str = pam(x) # get the PAMx value and 'PAMx' string for displaying purpose
 
 # **********************************************************************************************
 # ************************  The Log-odds matrix function   *************************************
@@ -108,16 +93,37 @@ def log_odds():
       S[i][j] = (S[i][j] + S[j][i]) / 2
       S[j][i] = S[i][j]
 
-  return np.rint(S).astype(int) # Part of the post-process to round into nearest integer and
-                                # change into int to avoid decimal formats like 2.0, 0.0 ...
-
+  return S
 # ************************** End of the Log-odds Function  *************************************
 # **********************************************************************************************
+
+
+# **********************************************************************************************
+# ************************  Post-processing Section   ******************************************
+sys.stdout=open(output_path,"w") # Open an output file to write all printed statements and values  
+
+print('\nChecking input mut size: ', mut.shape) # confirm if we get the right matrix size from the text
+print("\nPrinted values include: PAM1, PAMx(round to nearest int) and Log-odds of PAMx as nearest int")
+
+print("\n*******************************************************")
+print("****************** PAM1 *******************************")
+print("*******************************************************")
+print(PAM1) # PAM1 values here are in decimal since they already arebgiven in integers
+
+
+print("\n*******************************************************")
+print("****************** {} *****************************".format(PAM_str)) # PAMx indicator for each x
+print("*******************************************************\n")
+print(np.rint(PAMx * 100).astype(int)) # Display PAMx values as nearest integers roundining and changing -
+                           # data type as int to resolve formats like 1.0, 0.0 into to 1, 0, respctively
 
 print("\n*********************************************************")
 print("****** The Log-odds matrix for {} *******************".format(PAM_str))
 print("*********************************************************")
-print(log_odds()) # The post-processed values streamed to the output file
-
+print(np.rint(log_odds()).astype(int)) # Round into nearest integer and
+                                # change type into int to avoid decimal formats like 2.0, 0.0 ...
 sys.stdout.close() # Close the output file
+
+# ************************** End of Post-processing and the whole task  ************************
+# **********************************************************************************************
 
